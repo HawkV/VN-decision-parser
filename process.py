@@ -96,6 +96,10 @@ def list_contains_items(list, items):
 
 
 subject_conditions = ["is_subject", "is_free_or_tributary_trigger"]
+subject_potential = {
+    'is_free_or_tributary_trigger': 'yes',
+    'ai': 'no'
+}
 
 free_change_decisions = {
     f"{name}_ai": decision for name, decision
@@ -107,6 +111,12 @@ for decision in free_change_decisions:
     """removing the conditions from the allow clause"""
     for condition in subject_conditions:
         free_change_decisions[decision]["allow"].pop(condition, None)
+
+    if "OR" in free_change_decisions[decision]["potential"]:
+        free_change_decisions[decision]["potential"]["OR"] = [
+            item for item in free_change_decisions[decision]["potential"]["OR"]
+            if item != subject_potential
+        ]
 
     free_change_decisions[decision]["potential"]["ai"] = "yes"
 
